@@ -1,42 +1,40 @@
 #include <iostream>
+#include <math.h>
 #include <unordered_map>
+#include <iomanip>
 using namespace std;
-
-// recrusion function
-float recursion(float r, float s, float N,std::unordered_map <std::string,float> &map)
-{
-    string rstr=std::to_string((int)r);
-    string sstr=std::to_string((int)s);
-    if (map.find(rstr+","+sstr) != map.end())
-        return map[rstr+","+sstr];
-    // Because V(N,s)==N+1-s, so if r==N, directly return N+1-s
-    if (r == N){
-        map[rstr+","+sstr]=N+1-s;
-        return N + 1 - s;
-    }
-        
-
-    // Calculate the r+1 situation
-    float add = 0;
-    for (int i = 1; i <= r + 1; i++)
-        add = add + recursion(r + 1, i, N,map);
-    add = add / (r + 1);
-
-    // Return the max{V(r,s),r+1 situation}
-    float Max=max(N + 1 - (N + 1) / (r + 1) * s, add);
-    map[rstr+","+sstr]=Max;
-    return Max;
-}
 
 int main()
 {
-    float N;
-    
-    while (cin >> N)
+    int expert;                             // input the number of the expert
+    float w[5] = {0.2, 0.2, 0.2, 0.2, 0.2}; // build the w array
+    while (cin >> expert)
     {
-        // Use a map to record the V(r,s)
-        std::unordered_map <std::string,float> map;
-        cout << recursion(1, 1, N,map) << endl; // Get into the recursion, output the answer
+        float sum = 0; // the sum of w[j]*exp(z[i])
+        float z[5];    // build the z array for every time
+        for (int i = 0; i < sizeof(w) / sizeof(w[0]); i++)
+        {
+            if (i == expert - 1)
+            {
+                z[i] = 1;
+            }
+            else
+            {
+                z[i] = 0;
+            }
+        }
+
+        for (int i = 0; i < sizeof(w) / sizeof(w[0]); i++)
+        {
+            sum = sum + w[i] * exp(z[i]); // sum the w[i] * exp(z[i])
+        }
+
+        for (int i = 0; i < sizeof(w) / sizeof(w[0]); i++)
+        {
+            w[i] = w[i] * exp(z[i]) / sum; // calculate the w[i] and output it in setprecision(3)
+            cout << setprecision(3) << w[i] << ' ';
+        }
+        cout << endl;
     }
     return 0;
 }
